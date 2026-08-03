@@ -290,7 +290,7 @@
         // TU URL DE GOOGLE APPS SCRIPT
         const URL_GAS = "https://script.google.com/macros/s/AKfycbwkO5qfrSCLHQv2ACF2bs_Ci7wefwWwOyz-taOJJLkao_yQKNqTQuF1vM9gfdMQIzo/exec";
 
-        // === CONEXIÓN REAL DE LOGIN A GOOGLE SHEETS ===
+       // === CONEXIÓN REAL DE LOGIN A GOOGLE SHEETS ===
         async function iniciarSesion() {
             const id = document.getElementById('estudiante-id').value.trim();
             const pass = document.getElementById('estudiante-pass').value.trim();
@@ -307,26 +307,41 @@
             try {
                 const response = await fetch(`${URL_GAS}?action=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`);
                 const result = await response.json();
+                
+                console.log("Respuesta del servidor:", result); // Para que podamos ver qué llega en la consola (F12)
 
-                if (result.success) {
+                // CASO 1: Tu GAS envía formato estricto con "success: true"
+                if (result.success === true) {
                     usuarioActual = id;
                     datosGlobales = result.data; 
                     
                     document.getElementById('login-overlay').style.display = 'none';
                     poblarMenuLateral();
                     cargarVistaHoja("Portada");
-                } else {
-                    alert("Error: " + result.message);
+                } 
+                // CASO 2: Tu GAS envía directamente los datos del Excel (ej. {"Portada": [...], ...})
+                else if (result && (result["Portada"] || Object.keys(result).length > 0 && result.success === undefined)) {
+                    usuarioActual = id;
+                    // Si viene envuelto en "data" lo tomamos, si no, tomamos todo el "result"
+                    datosGlobales = result.data ? result.data : result; 
+                    
+                    document.getElementById('login-overlay').style.display = 'none';
+                    poblarMenuLateral();
+                    cargarVistaHoja("Portada");
+                } 
+                // CASO 3: Es un error real (contraseña incorrecta)
+                else {
+                    const mensajeError = result.message || result.error || "Credenciales incorrectas o formato no reconocido.";
+                    alert("Acceso denegado: " + mensajeError);
                 }
             } catch (error) {
-                alert("Hubo un problema de conexión. Intenta de nuevo.");
-                console.error(error);
+                alert("Hubo un problema de conexión con Google. Intenta de nuevo.");
+                console.error("Error de Fetch:", error);
             } finally {
                 btn.innerText = "INGRESAR";
                 btn.disabled = false;
             }
         }
-
         // === CREACIÓN DEL MENÚ LATERAL ===
         function poblarMenuLateral() {
             const menuLista = document.getElementById('menu-lista');
