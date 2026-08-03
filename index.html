@@ -317,10 +317,20 @@
             const esPortada = nombreHoja.toLowerCase() === 'portada' && (tituloTemaTexto === 'Portada' || tituloTemaTexto === '');
             let HTMLContenido = '';
 
+            // --- FUNCIÓN DE FORMATO ACTUALIZADA ---
             const darFormato = (texto) => {
                 if (!texto) return '';
-                let f = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // 1. Detecta saltos de línea de Excel (Alt+Enter) y los convierte en párrafos HTML perfectos
+                // El \n+ asegura que aunque des 3 enter, solo se haga 1 salto estético.
+                let f = texto.replace(/\n+/g, '</p><p style="margin-top: 1.2rem; margin-bottom: 1rem !important; text-align: justify;">');
+                
+                // 2. Negritas
+                f = f.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // 3. Resaltados
                 f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(203, 163, 77, 0.2); color: var(--verde-sidebar); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
+                
                 return f;
             };
 
@@ -366,7 +376,7 @@
                         if (contenido !== '') {
                             HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
                             if (contenido.startsWith('>>')) {
-                                HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
+                                HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;"><p style="margin: 0; text-align: justify;">${darFormato(contenido.substring(2).trim())}</p></div>`;
                             } else {
                                 HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
                             }
@@ -379,7 +389,7 @@
                             isArticleBodyOpen = true;
                         }
                         if (contenido.startsWith('>>')) {
-                            HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
+                            HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;"><p style="margin: 0; text-align: justify;">${darFormato(contenido.substring(2).trim())}</p></div>`;
                         } else {
                             HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
                         }
