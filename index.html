@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antología Fisiopatología</title>
+    
+    <!-- Tipografías High-Editorial -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Colores extraídos exactamente de image_3ad224.png */
+            --verde-bosque: #164332; 
+            --verde-claro: #E8F0EA;
+            --oro-editorial: #D4AF37;
+            --texto-oscuro: #1A1A1A;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: white;
+            color: var(--texto-oscuro);
+        }
+
+        /* --- PANTALLA DE LOGIN (Estilo idéntico a tu captura) --- */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff; /* Fondo blanco limpio */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .login-box {
+            background: transparent;
+            padding: 40px;
+            text-align: center;
+            width: 320px;
+        }
+        .login-box h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--verde-bosque);
+            font-size: 2.4rem;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .login-box p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            color: #6a767d;
+            margin-bottom: 35px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 14px 15px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .login-box input:focus {
+            border-color: var(--verde-bosque);
+        }
+        .login-box button {
+            width: 100%;
+            background-color: var(--verde-bosque);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-top: 5px;
+            transition: opacity 0.3s;
+        }
+        .login-box button:hover {
+            opacity: 0.9;
+        }
+
+        /* --- MENÚ LATERAL --- */
+        #sidebar {
+            width: 260px;
+            background-color: var(--verde-bosque);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        #sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--oro-editorial);
+        }
+        #sidebar-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        #sidebar-header p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            color: var(--oro-editorial);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin: 5px 0 0 0;
+        }
+        #menu-lista {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-item {
+            padding: 15px 25px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        .menu-item:hover { background-color: rgba(255,255,255,0.05); }
+        .menu-item.active {
+            background-color: rgba(0,0,0,0.2);
+            border-left: 4px solid var(--oro-editorial);
+        }
+
+        /* --- ÁREA PRINCIPAL --- */
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            background-color: white;
+            position: relative;
+        }
+
+        /* --- DASHBOARD GAMIFICACIÓN --- */
+        #dashboard-panel {
+            width: 350px;
+            background-color: var(--verde-claro);
+            padding: 30px;
+            border-right: 1px solid #d0ddd5;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-top: 3px solid var(--oro-editorial);
+        }
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            margin: 0 0 10px 0;
+            font-size: 1.3rem;
+            color: var(--verde-bosque);
+        }
+        .card p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            color: #555;
+            line-height: 1.5;
+        }
+        .input-group { display: flex; gap: 10px; margin-top: 15px; }
+        .input-group input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; }
+        .btn-primary { background: var(--verde-bosque); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 1px; }
+
+        /* --- VISOR DE DOCUMENTO --- */
+        #visor-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 60px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #titulo-visor {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--verde-bosque);
+            text-align: center;
+            margin: 0 0 10px 0;
+            letter-spacing: 4px;
+        }
+        #subtitulo-unidad {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            color: var(--oro-editorial);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        /* MAGIA CSS PARA LA LETRA CAPITULAR */
+        .article-body > p:first-of-type::first-letter {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 10px;
+            margin-top: 5px;
+            color: var(--verde-bosque);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY DE LOGIN -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Acceso</h2>
+            <p>Antología de Fisiopatología</p>
+            <input type="text" id="estudiante-id" placeholder="Matrícula / ID">
+            <input type="password" id="estudiante-pass" placeholder="Contraseña">
+            <button onclick="iniciarSesion()">INGRESAR</button>
+        </div>
+    </div>
+
+    <!-- MENÚ LATERAL -->
+    <div id="sidebar">
+        <div id="sidebar-header">
+            <h1>ANTOLOGÍA</h1>
+            <p>FISIOPATOLOGÍA</p>
+        </div>
+        <ul id="menu-lista">
+            <!-- El menú se llena con JS -->
+        </ul>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="main-content">
+        
+        <!-- DASHBOARD -->
+        <div id="dashboard-panel">
+            <div class="card">
+                <h3>Acceso y Progreso 🔑</h3>
+                <p>Introduce la llave obtenida en tus actividades digitales para desbloquear los siguientes temas:</p>
+                <div class="input-group">
+                    <input type="text" placeholder="EJ. FISIO2026">
+                    <button class="btn-primary">LIBERAR</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Pase de Salida 🎓</h3>
+                <p>Completa la lectura del tema para habilitar la actividad interactiva de cierre:</p>
+                <div style="margin-top: 15px; border: 1px dashed var(--oro-editorial); padding: 5px; border-radius: 6px;">
+                    <button class="btn-primary" style="width: 100%; background: var(--verde-bosque);">COMPLETAR ACTIVIDAD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISOR DE LECTURA -->
+        <div id="visor-wrapper">
+            <h1 id="titulo-visor">Cargando...</h1>
+            <div id="subtitulo-unidad">Por favor espera</div>
+            <div id="cuerpo-visor">
+                <!-- El contenido se inyecta aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === VARIABLES DE ESTADO ===
+        let datosGlobales = {}; 
+        let temaSeleccionado = '';
+        let usuarioActual = null;
+        
+        // TU URL DE GOOGLE APPS SCRIPT
+        const URL_GAS = "https://script.google.com/macros/s/AKfycbwkO5qfrSCLHQv2ACF2bs_Ci7wefwWwOyz-taOJJLkao_yQKNqTQuF1vM9gfdMQIzo/exec";
+
+        // === CONEXIÓN REAL DE LOGIN A GOOGLE SHEETS ===
+        async function iniciarSesion() {
+            const id = document.getElementById('estudiante-id').value.trim();
+            const pass = document.getElementById('estudiante-pass').value.trim();
+            const btn = document.querySelector('.login-box button');
+
+            if (!id || !pass) {
+                alert("Por favor, ingresa tu ID y contraseña.");
+                return;
+            }
+
+            btn.innerText = "AUTENTICANDO...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${URL_GAS}?action=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    usuarioActual = id;
+                    datosGlobales = result.data; 
+                    
+                    document.getElementById('login-overlay').style.display = 'none';
+                    poblarMenuLateral();
+                    cargarVistaHoja("Portada");
+                } else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                alert("Hubo un problema de conexión. Intenta de nuevo.");
+                console.error(error);
+            } finally {
+                btn.innerText = "INGRESAR";
+                btn.disabled = false;
+            }
+        }
+
+        // === CREACIÓN DEL MENÚ LATERAL ===
+        function poblarMenuLateral() {
+            const menuLista = document.getElementById('menu-lista');
+            menuLista.innerHTML = ''; 
+            
+            const temas = Object.keys(datosGlobales);
+            temas.forEach(tema => {
+                const li = document.createElement('li');
+                li.className = 'menu-item' + (tema === temaSeleccionado ? ' active' : '');
+                const icono = (tema === "Portada" || tema === "Tema 1") ? "🔓" : "🔒";
+                li.innerHTML = `<span>${tema}</span> <span style="font-size: 0.8rem;">${icono}</span>`;
+                li.onclick = () => cargarVistaHoja(tema);
+                menuLista.appendChild(li);
+            });
+        }
+
+        // === FUNCIÓN DE MAQUETACIÓN (VERSIÓN DEFINITIVA AGRUPADA) ===
+        function cargarVistaHoja(nombreHoja) {
+            temaSeleccionado = nombreHoja;
+            const datosHoja = datosGlobales[nombreHoja];
+            const tituloVisor = document.getElementById('titulo-visor');
+            const subtituloUnidad = document.getElementById('subtitulo-unidad');
+            const cuerpoVisor = document.getElementById('cuerpo-visor');
+
+            poblarMenuLateral(); 
+
+            if (!datosHoja || datosHoja.length === 0) {
+                tituloVisor.innerText = nombreHoja;
+                subtituloUnidad.innerText = '';
+                cuerpoVisor.innerText = 'Sin contenido.';
+                return;
+            }
+
+            let unidadTexto = '';
+            let tituloTemaTexto = nombreHoja;
+            
+            datosHoja.forEach((fila) => {
+                const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
+                const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : '').trim();
+                
+                if (seccion === 'UNIDAD PERTENECIENTE') unidadTexto = contenido;
+                else if (seccion === 'TÍTULO DEL TEMA') tituloTemaTexto = contenido;
+            });
+
+            const esPortada = nombreHoja.toLowerCase() === 'portada' && (tituloTemaTexto === 'Portada' || tituloTemaTexto === '');
+            let HTMLContenido = '';
+
+            const darFormato = (texto) => {
+                if (!texto) return '';
+                let f = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(212, 175, 55, 0.2); color: var(--verde-bosque); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
+                return f;
+            };
+
+            if (esPortada) {
+                HTMLContenido += `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; margin-top: 10px; padding: 0 20px;">`;
+                datosHoja.forEach((fila) => {
+                    const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
+                    if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_') || seccion === '') return;
+                    
+                    let estilo = "";
+                    const esMayusculas = seccion === seccion.toUpperCase() && /[A-ZÁÉÍÓÚ]/.test(seccion);
+
+                    if (seccion.includes("UNIVERSIDAD") || seccion.includes("SINALOA") || seccion === "ANTOLOGÍA") {
+                        estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--oro-editorial); letter-spacing: 3px; text-transform: uppercase; margin-bottom: -5px;";
+                    } else if (seccion === "FISIOPATOLOGÍA") {
+                        estilo = "font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-bosque); letter-spacing: 5px; margin: 25px 0;";
+                    } else if (seccion.includes("Índice")) {
+                        estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--oro-editorial); color: var(--verde-bosque); padding-bottom: 5px; margin-top: 30px;";
+                    } else if (esMayusculas) {
+                        estilo = "font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--verde-bosque); letter-spacing: 2px; margin-top: 15px;";
+                    } else {
+                        estilo = "font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: #444; font-style: italic;";
+                    }
+                    HTMLContenido += `<div style="${estilo}">${seccion}</div>`;
+                });
+                HTMLContenido += `</div>`;
+            } else {
+                HTMLContenido += `<div style="padding-bottom: 40px; margin-top: 10px;">`;
+                let isArticleBodyOpen = false;
+
+                datosHoja.forEach((fila) => {
+                    const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
+                    const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : '').trim();
+
+                    if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_')) return;
+                    if (seccion === '' && contenido === '') return;
+
+                    if (seccion !== '') {
+                        if (isArticleBodyOpen) {
+                            HTMLContenido += `</div></div>`;
+                            isArticleBodyOpen = false;
+                        }
+
+                        HTMLContenido += `<div class="section-block" style="margin-top: 2.5rem !important; margin-bottom: 0 !important;">`;
+                        HTMLContenido += `<div style="border-top: 1px solid rgba(212, 175, 55, 0.3); width: 100%; margin-bottom: 1rem;"></div>`;
+                        HTMLContenido += `<h2 class="section-heading" style="margin-bottom: 1rem !important; font-size: 1.4rem !important; font-family: 'Playfair Display', serif; color: var(--verde-bosque);">${seccion}</h2>`;
+                        
+                        if (contenido !== '') {
+                            HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
+                            if (contenido.startsWith('>>')) {
+                                HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-bosque); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
+                            } else {
+                                HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
+                            }
+                            isArticleBodyOpen = true;
+                        }
+                    } else if (contenido !== '') {
+                        if (!isArticleBodyOpen) {
+                            HTMLContenido += `<div class="section-block" style="margin-top: 2rem !important; margin-bottom: 0 !important;">`;
+                            HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
+                            isArticleBodyOpen = true;
+                        }
+                        
+                        if (contenido.startsWith('>>')) {
+                            HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-bosque); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
+                        } else {
+                            HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
+                        }
+                    }
+                });
+
+                if (isArticleBodyOpen) {
+                    HTMLContenido += `</div></div>`;
+                }
+                HTMLContenido += `</div>`;
+            }
+
+            if (esPortada) {
+                tituloVisor.innerText = '';
+                subtituloUnidad.innerText = '';
+            } else {
+                tituloVisor.innerText = tituloTemaTexto;
+                subtituloUnidad.innerText = unidadTexto;
+            }
+
+            cuerpoVisor.innerHTML = HTMLContenido || '<p>Contenido en edición.</p>';
+        }
+    </script>
+</body>
+</html>
