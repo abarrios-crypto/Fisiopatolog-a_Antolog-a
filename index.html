@@ -10,18 +10,18 @@
     
     <style>
         :root {
-            /* Colores extraídos exactamente de image_3ab0f8.png */
-            --verde-sidebar: #0f2319; /* Verde súper oscuro del menú y botones */
-            --verde-activo: #264835; /* Verde de la celda "Portada" seleccionada */
-            --verde-fondo-dash: #e4ece7; /* Verde pálido del área de progreso */
-            --oro-editorial: #cba34d; /* Dorado de letras y candados */
+            /* Colores extraídos exactamente de tu diseño */
+            --verde-sidebar: #0f2319; 
+            --verde-activo: #264835; 
+            --verde-fondo-dash: #e4ece7; 
+            --oro-editorial: #cba34d; 
             --texto-oscuro: #1A1A1A;
         }
 
         body {
             margin: 0;
             font-family: 'Cormorant Garamond', serif;
-            display: flex;
+            display: flex; /* Sidebar a la izquierda, Main Content a la derecha */
             height: 100vh;
             overflow: hidden;
             background-color: white;
@@ -57,33 +57,18 @@
         #sidebar-header {
             padding: 35px 20px 25px 20px;
             text-align: center;
-            border-bottom: 1px solid rgba(203, 163, 77, 0.4); /* Línea dorada sutil */
+            border-bottom: 1px solid rgba(203, 163, 77, 0.4);
             margin-bottom: 15px;
         }
-        #sidebar-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            color: #ffffff; /* Texto blanco como en la imagen */
-            margin: 0;
-            letter-spacing: 2px;
-        }
-        #sidebar-header p {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            color: var(--oro-editorial);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin: 5px 0 0 0;
-            font-weight: 600;
-        }
+        #sidebar-header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #ffffff; margin: 0; letter-spacing: 2px; }
+        #sidebar-header p { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--oro-editorial); letter-spacing: 3px; text-transform: uppercase; margin: 5px 0 0 0; font-weight: 600; }
         #menu-lista { list-style: none; padding: 0; margin: 0; }
         
-        /* Ítems del menú */
         .menu-item {
             padding: 14px 20px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.85rem;
-            color: #8fa096; /* Color grisáceo para los inactivos */
+            color: #8fa096;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -96,9 +81,19 @@
             background-color: var(--verde-activo);
             color: #ffffff;
             border-left: 3px solid var(--oro-editorial);
-            margin-right: 15px; /* Para que la caja no toque el borde derecho */
+            margin-right: 15px;
             border-radius: 0 6px 6px 0;
             font-weight: 600;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL (ESTO ARREGLA EL PROBLEMA) --- */
+        #main-content {
+            flex: 1; /* Toma todo el espacio restante después del menú */
+            display: flex;
+            flex-direction: row; /* Coloca el Dashboard a la izq y la Lectura a la der */
+            background-color: white;
+            position: relative;
+            overflow: hidden; 
         }
 
         /* --- DASHBOARD GAMIFICACIÓN --- */
@@ -111,38 +106,22 @@
             gap: 20px;
             transition: all 0.3s ease;
             border-right: 1px solid #d0dad4;
+            overflow-y: auto;
         }
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            border-top: 3px solid var(--oro-editorial);
-        }
+        .card { background: white; padding: 25px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border-top: 3px solid var(--oro-editorial); }
         .card h3 { font-family: 'Playfair Display', serif; margin: 0 0 10px 0; font-size: 1.4rem; color: #111; display: flex; justify-content: space-between;}
         .card p { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #666; line-height: 1.6; }
         .input-group { display: flex; gap: 10px; margin-top: 15px; flex-direction: column;}
         .input-group input { padding: 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; outline: none; }
         
-        /* Botones dorados sobre verde oscuro */
         .btn-primary { 
-            background: var(--verde-sidebar); 
-            color: var(--oro-editorial); 
-            border: none; 
-            padding: 12px 15px; 
-            cursor: pointer; 
-            border-radius: 4px; 
-            font-family: 'Montserrat', sans-serif; 
-            font-weight: 700; 
-            font-size: 0.75rem; 
-            letter-spacing: 1.5px; 
-            transition: opacity 0.3s;
+            background: var(--verde-sidebar); color: var(--oro-editorial); border: none; padding: 12px 15px; cursor: pointer; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 1.5px; transition: opacity 0.3s;
         }
         .btn-primary:hover { opacity: 0.9; }
 
         /* --- VISOR DE DOCUMENTO --- */
         #visor-wrapper {
-            flex: 1;
+            flex: 1; /* Toma el espacio que sobra del dashboard */
             overflow-y: auto;
             padding: 30px 60px;
             background: white;
@@ -160,18 +139,7 @@
             border-bottom: 1px solid #eee;
             margin-bottom: 30px;
         }
-        .btn-nav {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.75rem;
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            background: white;
-            cursor: pointer;
-            border-radius: 20px;
-            color: #555;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
+        .btn-nav { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; padding: 8px 15px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 20px; color: #555; font-weight: 600; transition: background 0.3s; }
         .btn-nav:hover { background: var(--verde-fondo-dash); }
 
         #titulo-visor { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-sidebar); text-align: center; margin: 0 0 10px 0; letter-spacing: 4px; }
@@ -265,12 +233,10 @@
         
         const URL_GAS = "https://script.google.com/macros/s/AKfycbwkO5qfrSCLHQv2ACF2bs_Ci7wefwWwOyz-taOJJLkao_yQKNqTQuF1vM9gfdMQIzo/exec";
 
-        // Funciones para colapsar paneles
         function togglePanel(panelId) {
             const panel = document.getElementById(panelId);
             panel.classList.toggle('collapsed');
             
-            // Cambiar el texto del botón dependiendo del estado
             const isSidebar = panelId === 'sidebar';
             const btn = event.target;
             if (panel.classList.contains('collapsed')) {
@@ -320,8 +286,6 @@
             temas.forEach(tema => {
                 const li = document.createElement('li');
                 li.className = 'menu-item' + (tema === temaSeleccionado ? ' active' : '');
-                
-                // Color dorado para el candado como en la imagen
                 const icono = (tema === "Portada" || tema === "Tema 1") ? "🔓" : "🔒";
                 li.innerHTML = `<span>${tema}</span> <span style="color: var(--oro-editorial); font-size: 0.9rem;">${icono}</span>`;
                 li.onclick = () => cargarVistaHoja(tema);
