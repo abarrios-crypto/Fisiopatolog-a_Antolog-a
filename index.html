@@ -6,14 +6,15 @@
     <title>Antología Fisiopatología</title>
     
     <!-- Tipografías High-Editorial -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Colores extraídos exactamente de image_3ad224.png */
-            --verde-bosque: #164332; 
-            --verde-claro: #E8F0EA;
-            --oro-editorial: #D4AF37;
+            /* Colores extraídos exactamente de image_3ab0f8.png */
+            --verde-sidebar: #0f2319; /* Verde súper oscuro del menú y botones */
+            --verde-activo: #264835; /* Verde de la celda "Portada" seleccionada */
+            --verde-fondo-dash: #e4ece7; /* Verde pálido del área de progreso */
+            --oro-editorial: #cba34d; /* Dorado de letras y candados */
             --texto-oscuro: #1A1A1A;
         }
 
@@ -27,87 +28,42 @@
             color: var(--texto-oscuro);
         }
 
-        /* --- PANTALLA DE LOGIN (Estilo idéntico a tu captura) --- */
+        /* --- PANTALLA DE LOGIN --- */
         #login-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffffff; /* Fondo blanco limpio */
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-        .login-box {
-            background: transparent;
-            padding: 40px;
-            text-align: center;
-            width: 320px;
-        }
-        .login-box h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--verde-bosque);
-            font-size: 2.4rem;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-        .login-box p {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
-            color: #6a767d;
-            margin-bottom: 35px;
-        }
-        .login-box input {
-            width: 100%;
-            padding: 14px 15px;
-            margin-bottom: 18px;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.9rem;
-            color: #333;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .login-box input:focus {
-            border-color: var(--verde-bosque);
-        }
-        .login-box button {
-            width: 100%;
-            background-color: var(--verde-bosque);
-            color: white;
-            border: none;
-            padding: 15px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            letter-spacing: 2px;
-            border-radius: 4px;
-            margin-top: 5px;
-            transition: opacity 0.3s;
-        }
-        .login-box button:hover {
-            opacity: 0.9;
-        }
+        .login-box { background: transparent; padding: 40px; text-align: center; width: 320px; }
+        .login-box h2 { font-family: 'Playfair Display', serif; color: var(--verde-sidebar); font-size: 2.4rem; margin-bottom: 5px; }
+        .login-box p { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: #6a767d; margin-bottom: 35px; }
+        .login-box input { width: 100%; padding: 14px; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
+        .login-box button { width: 100%; background-color: var(--verde-sidebar); color: var(--oro-editorial); border: none; padding: 15px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; letter-spacing: 2px; border-radius: 4px; }
 
         /* --- MENÚ LATERAL --- */
         #sidebar {
             width: 260px;
-            background-color: var(--verde-bosque);
+            background-color: var(--verde-sidebar);
             color: white;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            transition: all 0.3s ease;
         }
         #sidebar-header {
-            padding: 30px 20px;
+            padding: 35px 20px 25px 20px;
             text-align: center;
-            border-bottom: 3px solid var(--oro-editorial);
+            border-bottom: 1px solid rgba(203, 163, 77, 0.4); /* Línea dorada sutil */
+            margin-bottom: 15px;
         }
         #sidebar-header h1 {
             font-family: 'Playfair Display', serif;
             font-size: 1.6rem;
+            color: #ffffff; /* Texto blanco como en la imagen */
             margin: 0;
             letter-spacing: 2px;
         }
@@ -118,101 +74,120 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             margin: 5px 0 0 0;
+            font-weight: 600;
         }
-        #menu-lista {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        #menu-lista { list-style: none; padding: 0; margin: 0; }
+        
+        /* Ítems del menú */
         .menu-item {
-            padding: 15px 25px;
+            padding: 14px 20px;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            color: #8fa096; /* Color grisáceo para los inactivos */
             cursor: pointer;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            margin-bottom: 2px;
         }
-        .menu-item:hover { background-color: rgba(255,255,255,0.05); }
+        .menu-item:hover { color: #ffffff; }
         .menu-item.active {
-            background-color: rgba(0,0,0,0.2);
-            border-left: 4px solid var(--oro-editorial);
-        }
-
-        /* --- ÁREA PRINCIPAL --- */
-        #main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: row;
-            background-color: white;
-            position: relative;
+            background-color: var(--verde-activo);
+            color: #ffffff;
+            border-left: 3px solid var(--oro-editorial);
+            margin-right: 15px; /* Para que la caja no toque el borde derecho */
+            border-radius: 0 6px 6px 0;
+            font-weight: 600;
         }
 
         /* --- DASHBOARD GAMIFICACIÓN --- */
         #dashboard-panel {
-            width: 350px;
-            background-color: var(--verde-claro);
+            width: 320px;
+            background-color: var(--verde-fondo-dash);
             padding: 30px;
-            border-right: 1px solid #d0ddd5;
             display: flex;
             flex-direction: column;
             gap: 20px;
+            transition: all 0.3s ease;
+            border-right: 1px solid #d0dad4;
         }
         .card {
             background: white;
             padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
             border-top: 3px solid var(--oro-editorial);
         }
-        .card h3 {
-            font-family: 'Playfair Display', serif;
-            margin: 0 0 10px 0;
-            font-size: 1.3rem;
-            color: var(--verde-bosque);
+        .card h3 { font-family: 'Playfair Display', serif; margin: 0 0 10px 0; font-size: 1.4rem; color: #111; display: flex; justify-content: space-between;}
+        .card p { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; color: #666; line-height: 1.6; }
+        .input-group { display: flex; gap: 10px; margin-top: 15px; flex-direction: column;}
+        .input-group input { padding: 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; outline: none; }
+        
+        /* Botones dorados sobre verde oscuro */
+        .btn-primary { 
+            background: var(--verde-sidebar); 
+            color: var(--oro-editorial); 
+            border: none; 
+            padding: 12px 15px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 700; 
+            font-size: 0.75rem; 
+            letter-spacing: 1.5px; 
+            transition: opacity 0.3s;
         }
-        .card p {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.8rem;
-            color: #555;
-            line-height: 1.5;
-        }
-        .input-group { display: flex; gap: 10px; margin-top: 15px; }
-        .input-group input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; }
-        .btn-primary { background: var(--verde-bosque); color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 1px; }
+        .btn-primary:hover { opacity: 0.9; }
 
         /* --- VISOR DE DOCUMENTO --- */
         #visor-wrapper {
             flex: 1;
             overflow-y: auto;
-            padding: 40px 60px;
+            padding: 30px 60px;
             background: white;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         
-        #titulo-visor {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: var(--verde-bosque);
-            text-align: center;
-            margin: 0 0 10px 0;
-            letter-spacing: 4px;
+        /* BARRA SUPERIOR PARA COLAPSAR MENÚS */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
         }
-        #subtitulo-unidad {
+        .btn-nav {
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
-            color: var(--oro-editorial);
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
+            font-size: 0.75rem;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 20px;
+            color: #555;
             font-weight: 600;
+            transition: background 0.3s;
+        }
+        .btn-nav:hover { background: var(--verde-fondo-dash); }
+
+        #titulo-visor { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-sidebar); text-align: center; margin: 0 0 10px 0; letter-spacing: 4px; }
+        #subtitulo-unidad { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--oro-editorial); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; font-weight: 600; }
+
+        /* Clases utilitarias para colapsar paneles */
+        .collapsed {
+            width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border: none !important;
+            opacity: 0;
+            margin: 0 !important;
         }
 
-        /* MAGIA CSS PARA LA LETRA CAPITULAR */
+        /* Letra capitular */
         .article-body > p:first-of-type::first-letter {
             font-family: 'Playfair Display', serif;
             font-size: 4rem;
@@ -220,7 +195,7 @@
             line-height: 0.8;
             margin-right: 10px;
             margin-top: 5px;
-            color: var(--verde-bosque);
+            color: var(--verde-sidebar);
         }
     </style>
 </head>
@@ -243,9 +218,7 @@
             <h1>ANTOLOGÍA</h1>
             <p>FISIOPATOLOGÍA</p>
         </div>
-        <ul id="menu-lista">
-            <!-- El menú se llena con JS -->
-        </ul>
+        <ul id="menu-lista"></ul>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -254,7 +227,7 @@
         <!-- DASHBOARD -->
         <div id="dashboard-panel">
             <div class="card">
-                <h3>Acceso y Progreso 🔑</h3>
+                <h3>Acceso y Progreso <span>🔑</span></h3>
                 <p>Introduce la llave obtenida en tus actividades digitales para desbloquear los siguientes temas:</p>
                 <div class="input-group">
                     <input type="text" placeholder="EJ. FISIO2026">
@@ -263,86 +236,82 @@
             </div>
 
             <div class="card">
-                <h3>Pase de Salida 🎓</h3>
+                <h3>Pase de Salida <span>🎓</span></h3>
                 <p>Completa la lectura del tema para habilitar la actividad interactiva de cierre:</p>
-                <div style="margin-top: 15px; border: 1px dashed var(--oro-editorial); padding: 5px; border-radius: 6px;">
-                    <button class="btn-primary" style="width: 100%; background: var(--verde-bosque);">COMPLETAR ACTIVIDAD</button>
+                <div style="margin-top: 15px; border: 1.5px dashed var(--oro-editorial); padding: 5px; border-radius: 6px;">
+                    <button class="btn-primary" style="width: 100%;">COMPLETAR ACTIVIDAD</button>
                 </div>
             </div>
         </div>
 
         <!-- VISOR DE LECTURA -->
         <div id="visor-wrapper">
+            <!-- BOTONES COLAPSABLES -->
+            <div class="top-nav">
+                <button class="btn-nav" onclick="togglePanel('sidebar')">☰ Ocultar Menú</button>
+                <button class="btn-nav" onclick="togglePanel('dashboard-panel')">Ocultar Progreso ⚑</button>
+            </div>
+
             <h1 id="titulo-visor">Cargando...</h1>
             <div id="subtitulo-unidad">Por favor espera</div>
-            <div id="cuerpo-visor">
-                <!-- El contenido se inyecta aquí -->
-            </div>
+            <div id="cuerpo-visor"></div>
         </div>
     </div>
 
     <script>
-        // === VARIABLES DE ESTADO ===
         let datosGlobales = {}; 
         let temaSeleccionado = '';
         let usuarioActual = null;
         
-        // TU URL DE GOOGLE APPS SCRIPT
         const URL_GAS = "https://script.google.com/macros/s/AKfycbwkO5qfrSCLHQv2ACF2bs_Ci7wefwWwOyz-taOJJLkao_yQKNqTQuF1vM9gfdMQIzo/exec";
 
-       // === CONEXIÓN REAL DE LOGIN A GOOGLE SHEETS ===
+        // Funciones para colapsar paneles
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+            
+            // Cambiar el texto del botón dependiendo del estado
+            const isSidebar = panelId === 'sidebar';
+            const btn = event.target;
+            if (panel.classList.contains('collapsed')) {
+                btn.innerText = isSidebar ? '☰ Mostrar Menú' : 'Mostrar Progreso ⚑';
+            } else {
+                btn.innerText = isSidebar ? '☰ Ocultar Menú' : 'Ocultar Progreso ⚑';
+            }
+        }
+
         async function iniciarSesion() {
             const id = document.getElementById('estudiante-id').value.trim();
             const pass = document.getElementById('estudiante-pass').value.trim();
             const btn = document.querySelector('.login-box button');
 
-            if (!id || !pass) {
-                alert("Por favor, ingresa tu ID y contraseña.");
-                return;
-            }
+            if (!id || !pass) { alert("Por favor, ingresa tu ID y contraseña."); return; }
 
-            btn.innerText = "AUTENTICANDO...";
-            btn.disabled = true;
+            btn.innerText = "AUTENTICANDO..."; btn.disabled = true;
 
             try {
                 const response = await fetch(`${URL_GAS}?action=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`);
                 const result = await response.json();
-                
-                console.log("Respuesta del servidor:", result); // Para que podamos ver qué llega en la consola (F12)
 
-                // CASO 1: Tu GAS envía formato estricto con "success: true"
                 if (result.success === true) {
-                    usuarioActual = id;
-                    datosGlobales = result.data; 
-                    
+                    usuarioActual = id; datosGlobales = result.data; 
                     document.getElementById('login-overlay').style.display = 'none';
-                    poblarMenuLateral();
-                    cargarVistaHoja("Portada");
+                    poblarMenuLateral(); cargarVistaHoja("Portada");
                 } 
-                // CASO 2: Tu GAS envía directamente los datos del Excel (ej. {"Portada": [...], ...})
                 else if (result && (result["Portada"] || Object.keys(result).length > 0 && result.success === undefined)) {
-                    usuarioActual = id;
-                    // Si viene envuelto en "data" lo tomamos, si no, tomamos todo el "result"
-                    datosGlobales = result.data ? result.data : result; 
-                    
+                    usuarioActual = id; datosGlobales = result.data ? result.data : result; 
                     document.getElementById('login-overlay').style.display = 'none';
-                    poblarMenuLateral();
-                    cargarVistaHoja("Portada");
-                } 
-                // CASO 3: Es un error real (contraseña incorrecta)
-                else {
-                    const mensajeError = result.message || result.error || "Credenciales incorrectas o formato no reconocido.";
-                    alert("Acceso denegado: " + mensajeError);
+                    poblarMenuLateral(); cargarVistaHoja("Portada");
+                } else {
+                    alert("Acceso denegado: " + (result.message || result.error || "Credenciales incorrectas."));
                 }
             } catch (error) {
                 alert("Hubo un problema de conexión con Google. Intenta de nuevo.");
-                console.error("Error de Fetch:", error);
             } finally {
-                btn.innerText = "INGRESAR";
-                btn.disabled = false;
+                btn.innerText = "INGRESAR"; btn.disabled = false;
             }
         }
-        // === CREACIÓN DEL MENÚ LATERAL ===
+
         function poblarMenuLateral() {
             const menuLista = document.getElementById('menu-lista');
             menuLista.innerHTML = ''; 
@@ -351,14 +320,15 @@
             temas.forEach(tema => {
                 const li = document.createElement('li');
                 li.className = 'menu-item' + (tema === temaSeleccionado ? ' active' : '');
+                
+                // Color dorado para el candado como en la imagen
                 const icono = (tema === "Portada" || tema === "Tema 1") ? "🔓" : "🔒";
-                li.innerHTML = `<span>${tema}</span> <span style="font-size: 0.8rem;">${icono}</span>`;
+                li.innerHTML = `<span>${tema}</span> <span style="color: var(--oro-editorial); font-size: 0.9rem;">${icono}</span>`;
                 li.onclick = () => cargarVistaHoja(tema);
                 menuLista.appendChild(li);
             });
         }
 
-        // === FUNCIÓN DE MAQUETACIÓN (VERSIÓN DEFINITIVA AGRUPADA) ===
         function cargarVistaHoja(nombreHoja) {
             temaSeleccionado = nombreHoja;
             const datosHoja = datosGlobales[nombreHoja];
@@ -369,19 +339,13 @@
             poblarMenuLateral(); 
 
             if (!datosHoja || datosHoja.length === 0) {
-                tituloVisor.innerText = nombreHoja;
-                subtituloUnidad.innerText = '';
-                cuerpoVisor.innerText = 'Sin contenido.';
-                return;
+                tituloVisor.innerText = nombreHoja; subtituloUnidad.innerText = ''; cuerpoVisor.innerText = 'Sin contenido.'; return;
             }
 
-            let unidadTexto = '';
-            let tituloTemaTexto = nombreHoja;
-            
+            let unidadTexto = ''; let tituloTemaTexto = nombreHoja;
             datosHoja.forEach((fila) => {
                 const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
                 const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : '').trim();
-                
                 if (seccion === 'UNIDAD PERTENECIENTE') unidadTexto = contenido;
                 else if (seccion === 'TÍTULO DEL TEMA') tituloTemaTexto = contenido;
             });
@@ -392,7 +356,7 @@
             const darFormato = (texto) => {
                 if (!texto) return '';
                 let f = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(212, 175, 55, 0.2); color: var(--verde-bosque); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
+                f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(203, 163, 77, 0.2); color: var(--verde-sidebar); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
                 return f;
             };
 
@@ -401,18 +365,17 @@
                 datosHoja.forEach((fila) => {
                     const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
                     if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_') || seccion === '') return;
-                    
                     let estilo = "";
                     const esMayusculas = seccion === seccion.toUpperCase() && /[A-ZÁÉÍÓÚ]/.test(seccion);
 
                     if (seccion.includes("UNIVERSIDAD") || seccion.includes("SINALOA") || seccion === "ANTOLOGÍA") {
                         estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--oro-editorial); letter-spacing: 3px; text-transform: uppercase; margin-bottom: -5px;";
                     } else if (seccion === "FISIOPATOLOGÍA") {
-                        estilo = "font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-bosque); letter-spacing: 5px; margin: 25px 0;";
+                        estilo = "font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-sidebar); letter-spacing: 5px; margin: 25px 0;";
                     } else if (seccion.includes("Índice")) {
-                        estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--oro-editorial); color: var(--verde-bosque); padding-bottom: 5px; margin-top: 30px;";
+                        estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--oro-editorial); color: var(--verde-sidebar); padding-bottom: 5px; margin-top: 30px;";
                     } else if (esMayusculas) {
-                        estilo = "font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--verde-bosque); letter-spacing: 2px; margin-top: 15px;";
+                        estilo = "font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--verde-sidebar); letter-spacing: 2px; margin-top: 15px;";
                     } else {
                         estilo = "font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: #444; font-style: italic;";
                     }
@@ -431,19 +394,15 @@
                     if (seccion === '' && contenido === '') return;
 
                     if (seccion !== '') {
-                        if (isArticleBodyOpen) {
-                            HTMLContenido += `</div></div>`;
-                            isArticleBodyOpen = false;
-                        }
-
+                        if (isArticleBodyOpen) { HTMLContenido += `</div></div>`; isArticleBodyOpen = false; }
                         HTMLContenido += `<div class="section-block" style="margin-top: 2.5rem !important; margin-bottom: 0 !important;">`;
-                        HTMLContenido += `<div style="border-top: 1px solid rgba(212, 175, 55, 0.3); width: 100%; margin-bottom: 1rem;"></div>`;
-                        HTMLContenido += `<h2 class="section-heading" style="margin-bottom: 1rem !important; font-size: 1.4rem !important; font-family: 'Playfair Display', serif; color: var(--verde-bosque);">${seccion}</h2>`;
+                        HTMLContenido += `<div style="border-top: 1px solid rgba(203, 163, 77, 0.3); width: 100%; margin-bottom: 1rem;"></div>`;
+                        HTMLContenido += `<h2 class="section-heading" style="margin-bottom: 1rem !important; font-size: 1.4rem !important; font-family: 'Playfair Display', serif; color: var(--verde-sidebar);">${seccion}</h2>`;
                         
                         if (contenido !== '') {
                             HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
                             if (contenido.startsWith('>>')) {
-                                HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-bosque); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
+                                HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
                             } else {
                                 HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
                             }
@@ -455,28 +414,19 @@
                             HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
                             isArticleBodyOpen = true;
                         }
-                        
                         if (contenido.startsWith('>>')) {
-                            HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-bosque); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
+                            HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;">${darFormato(contenido.substring(2).trim())}</div>`;
                         } else {
                             HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
                         }
                     }
                 });
-
-                if (isArticleBodyOpen) {
-                    HTMLContenido += `</div></div>`;
-                }
+                if (isArticleBodyOpen) HTMLContenido += `</div></div>`;
                 HTMLContenido += `</div>`;
             }
 
-            if (esPortada) {
-                tituloVisor.innerText = '';
-                subtituloUnidad.innerText = '';
-            } else {
-                tituloVisor.innerText = tituloTemaTexto;
-                subtituloUnidad.innerText = unidadTexto;
-            }
+            if (esPortada) { tituloVisor.innerText = ''; subtituloUnidad.innerText = ''; } 
+            else { tituloVisor.innerText = tituloTemaTexto; subtituloUnidad.innerText = unidadTexto; }
 
             cuerpoVisor.innerHTML = HTMLContenido || '<p>Contenido en edición.</p>';
         }
