@@ -42,6 +42,21 @@
         .login-box input { width: 100%; padding: 14px; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; }
         .login-box button { width: 100%; background-color: var(--verde-sidebar); color: var(--oro-editorial); border: none; padding: 15px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; letter-spacing: 2px; border-radius: 4px; }
 
+        /* --- TELÓN / OVERLAY PARA MENÚS EN MÓVIL --- */
+        #backdrop-mobile {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            backdrop-filter: blur(2px);
+        }
+
+        /* --- BOTÓN DE CERRAR (SOLO PARA MÓVIL) --- */
+        .btn-cerrar-movil {
+            display: none; /* Oculto en PC */
+        }
+
         /* --- MENÚ LATERAL --- */
         #sidebar {
             width: 260px;
@@ -51,9 +66,10 @@
             flex-direction: column;
             overflow-y: auto;
             transition: all 0.3s ease;
+            z-index: 2000;
         }
         #sidebar-header {
-            padding: 35px 20px 25px 20px;
+            padding: 20px 20px 25px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(203, 163, 77, 0.4);
             margin-bottom: 15px;
@@ -105,6 +121,7 @@
             transition: all 0.3s ease;
             border-right: 1px solid #d0dad4;
             overflow-y: auto;
+            z-index: 2000;
         }
         .card { background: white; padding: 25px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border-top: 3px solid var(--oro-editorial); }
         .card h3 { font-family: 'Playfair Display', serif; margin: 0 0 10px 0; font-size: 1.4rem; color: #111; display: flex; justify-content: space-between;}
@@ -136,11 +153,12 @@
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
             margin-bottom: 30px;
+            gap: 10px;
         }
         .btn-nav { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; padding: 8px 15px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 20px; color: #555; font-weight: 600; transition: background 0.3s; }
         .btn-nav:hover { background: var(--verde-fondo-dash); }
 
-        #titulo-visor { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-sidebar); text-align: center; margin: 0 0 10px 0; letter-spacing: 4px; }
+        #titulo-visor { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 3rem); color: var(--verde-sidebar); text-align: center; margin: 0 0 10px 0; letter-spacing: 2px; }
         #subtitulo-unidad { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--oro-editorial); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 40px; font-weight: 600; }
 
         /* Clases utilitarias para colapsar paneles */
@@ -164,50 +182,65 @@
             color: var(--verde-sidebar);
         }
 
+        /* Estilo responsivo específico para el texto "FISIOPATOLOGÍA" de la Portada */
+        .titulo-fisiopatologia {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 6.5vw, 3rem);
+            color: var(--verde-sidebar);
+            letter-spacing: clamp(1px, 1vw, 5px);
+            margin: 20px 0;
+            text-align: center;
+            max-width: 100%;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+
         /* =========================================
            MAGIA RESPONSIVA PARA CELULARES
         ========================================= */
         @media (max-width: 850px) {
-            body {
-                position: relative;
-            }
+            body { position: relative; }
+            
+            /* Ancho máximo de 85% para dejar ver el fondo */
             #sidebar {
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 100%;
-                z-index: 2000; /* Flota sobre el texto */
-                box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+                position: absolute; left: 0; top: 0; height: 100%;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.4);
+                max-width: 85vw; 
             }
             #dashboard-panel {
-                position: absolute;
-                right: 0;
-                top: 0;
-                height: 100%;
-                z-index: 2000; /* Flota sobre el texto */
+                position: absolute; right: 0; top: 0; height: 100%;
                 box-shadow: -4px 0 15px rgba(0,0,0,0.2);
+                max-width: 85vw;
+                padding: 20px; /* Un poco menos de relleno interno en celular */
             }
+            
+            /* Estilos del botón volver a la lectura */
+            .btn-cerrar-movil {
+                display: block;
+                background: transparent;
+                border: 1px solid currentColor;
+                padding: 12px;
+                margin: 15px 15px 5px 15px;
+                border-radius: 4px;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.75rem;
+                font-weight: 600;
+                cursor: pointer;
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                opacity: 0.8;
+            }
+            #sidebar .btn-cerrar-movil { color: var(--oro-editorial); border-color: rgba(203, 163, 77, 0.4); }
+            #dashboard-panel .btn-cerrar-movil { color: var(--verde-sidebar); border-color: rgba(15, 35, 25, 0.2); margin: 0 0 15px 0;}
+
             #visor-wrapper {
-                padding: 20px 15px; /* Menos margen a los lados */
+                padding: 20px 15px;
                 width: 100%;
                 box-sizing: border-box;
             }
-            .top-nav {
-                flex-wrap: wrap; /* Acomoda los botones si no caben */
-                gap: 10px;
-            }
-            .btn-nav {
-                flex: 1; /* Mitades iguales para los botones superiores */
-                text-align: center;
-                padding: 10px 5px;
-            }
-            #titulo-visor {
-                font-size: 2.2rem; /* Título un poco más pequeño en celular */
-            }
-            .login-box {
-                width: 90%;
-                padding: 30px 20px;
-            }
+            .btn-nav { flex: 1; text-align: center; padding: 10px 5px; }
+            .login-box { width: 90%; padding: 30px 20px; }
         }
     </style>
 </head>
@@ -223,7 +256,11 @@
         </div>
     </div>
 
+    <div id="backdrop-mobile" onclick="cerrarPanelesMovil()"></div>
+
     <div id="sidebar">
+        <button class="btn-cerrar-movil" onclick="cerrarPanelesMovil()">✕ Volver a la lectura</button>
+        
         <div id="sidebar-header">
             <h1>ANTOLOGÍA</h1>
             <p>FISIOPATOLOGÍA</p>
@@ -234,11 +271,13 @@
     <div id="main-content">
         
         <div id="dashboard-panel">
+            <button class="btn-cerrar-movil" onclick="cerrarPanelesMovil()">✕ Volver a la lectura</button>
+
             <div class="card">
                 <h3>Acceso y Progreso <span>🔑</span></h3>
                 <p>Introduce la llave obtenida en tus actividades digitales para desbloquear los siguientes temas:</p>
                 <div class="input-group">
-                    <input type="text" id="llave-acceso" placeholder="MASTER2026">
+                    <input type="text" id="llave-acceso" placeholder="EJ. FISIO2026">
                     <button class="btn-primary" onclick="verificarLlave()">LIBERAR</button>
                 </div>
             </div>
@@ -254,8 +293,8 @@
 
         <div id="visor-wrapper">
             <div class="top-nav">
-                <button id="btn-menu" class="btn-nav" onclick="togglePanel('sidebar', 'btn-menu')">☰ Ocultar Menú</button>
-                <button id="btn-progreso" class="btn-nav" onclick="togglePanel('dashboard-panel', 'btn-progreso')">Ocultar Progreso ⚑</button>
+                <button id="btn-menu" class="btn-nav" onclick="togglePanel('sidebar', 'btn-menu')">☰ Mostrar Menú</button>
+                <button id="btn-progreso" class="btn-nav" onclick="togglePanel('dashboard-panel', 'btn-progreso')">Mostrar Progreso ⚑</button>
             </div>
 
             <h1 id="titulo-visor">Cargando...</h1>
@@ -279,22 +318,67 @@
                 alert("¡Llave correcta! Se han desbloqueado todos los temas de la antología.");
                 document.getElementById('llave-acceso').value = ""; 
                 poblarMenuLateral(); 
+                
+                // Si está en celular, cerramos el panel de progreso tras liberar para que vea los resultados
+                if(window.innerWidth <= 850) {
+                    cerrarPanelesMovil();
+                }
             } else {
                 alert("Llave de acceso no válida. Intenta de nuevo.");
             }
         }
 
-        // LÓGICA DE PANELES ACTUALIZADA
         function togglePanel(panelId, btnId) {
             const panel = document.getElementById(panelId);
+            const otroPanelId = (panelId === 'sidebar') ? 'dashboard-panel' : 'sidebar';
+            const otroBtnId = (panelId === 'sidebar') ? 'btn-progreso' : 'btn-menu';
+            const otroPanel = document.getElementById(otroPanelId);
+
+            if (window.innerWidth <= 850 && panel.classList.contains('collapsed')) {
+                otroPanel.classList.add('collapsed');
+                actualizarTextoBoton(otroPanelId, otroBtnId);
+            }
+
             panel.classList.toggle('collapsed');
-            
-            const isSidebar = panelId === 'sidebar';
+            actualizarTextoBoton(panelId, btnId);
+            comprobarBackdrop();
+        }
+
+        function actualizarTextoBoton(panelId, btnId) {
+            const panel = document.getElementById(panelId);
             const btn = document.getElementById(btnId);
+            const isSidebar = (panelId === 'sidebar');
+
             if (panel.classList.contains('collapsed')) {
                 btn.innerText = isSidebar ? '☰ Mostrar Menú' : 'Mostrar Progreso ⚑';
             } else {
                 btn.innerText = isSidebar ? '☰ Ocultar Menú' : 'Ocultar Progreso ⚑';
+            }
+        }
+
+        function comprobarBackdrop() {
+            const sidebar = document.getElementById('sidebar');
+            const dash = document.getElementById('dashboard-panel');
+            const backdrop = document.getElementById('backdrop-mobile');
+
+            if (window.innerWidth <= 850) {
+                if (!sidebar.classList.contains('collapsed') || !dash.classList.contains('collapsed')) {
+                    backdrop.style.display = 'block';
+                } else {
+                    backdrop.style.display = 'none';
+                }
+            } else {
+                backdrop.style.display = 'none';
+            }
+        }
+
+        function cerrarPanelesMovil() {
+            if (window.innerWidth <= 850) {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('dashboard-panel').classList.add('collapsed');
+                actualizarTextoBoton('sidebar', 'btn-menu');
+                actualizarTextoBoton('dashboard-panel', 'btn-progreso');
+                comprobarBackdrop();
             }
         }
 
@@ -318,13 +402,7 @@
                     poblarMenuLateral(); 
                     cargarVistaHoja("Portada");
                     
-                    // Magia Responsiva: Si es pantalla de celular, esconde los menús al inicio para que lean la portada
-                    if (window.innerWidth <= 850) {
-                        document.getElementById('sidebar').classList.add('collapsed');
-                        document.getElementById('btn-menu').innerText = '☰ Mostrar Menú';
-                        document.getElementById('dashboard-panel').classList.add('collapsed');
-                        document.getElementById('btn-progreso').innerText = 'Mostrar Progreso ⚑';
-                    }
+                    cerrarPanelesMovil();
                 } else {
                     alert("Acceso denegado: " + (result.message || result.error || "Credenciales incorrectas."));
                 }
@@ -356,11 +434,7 @@
                 li.onclick = () => {
                     if(esLibre) {
                         cargarVistaHoja(tema);
-                        // Cierra el menú en móviles apenas toques el tema, para dejarte leer
-                        if (window.innerWidth <= 850) {
-                            document.getElementById('sidebar').classList.add('collapsed');
-                            document.getElementById('btn-menu').innerText = '☰ Mostrar Menú';
-                        }
+                        cerrarPanelesMovil();
                     } else {
                         alert("Este tema está bloqueado. Ingresa tu llave en la sección 'Acceso y Progreso' para liberarlo.");
                     }
@@ -405,7 +479,7 @@
             };
 
             if (esPortada) {
-                HTMLContenido += `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; margin-top: 10px; padding: 0 20px;">`;
+                HTMLContenido += `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; margin-top: 10px; padding: 0 10px;">`;
                 datosHoja.forEach((fila) => {
                     const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
                     if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_') || seccion === '') return;
@@ -413,15 +487,16 @@
                     const esMayusculas = seccion === seccion.toUpperCase() && /[A-ZÁÉÍÓÚ]/.test(seccion);
 
                     if (seccion.includes("UNIVERSIDAD") || seccion.includes("SINALOA") || seccion === "ANTOLOGÍA") {
-                        estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: var(--oro-editorial); letter-spacing: 3px; text-transform: uppercase; margin-bottom: -5px;";
+                        estilo = "font-family: 'Montserrat', sans-serif; font-size: clamp(0.7rem, 2.5vw, 0.85rem); color: var(--oro-editorial); letter-spacing: 2px; text-transform: uppercase; margin-bottom: -5px;";
                     } else if (seccion === "FISIOPATOLOGÍA") {
-                        estilo = "font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--verde-sidebar); letter-spacing: 5px; margin: 25px 0;";
+                        HTMLContenido += `<div class="titulo-fisiopatologia">${seccion}</div>`;
+                        return;
                     } else if (seccion.includes("Índice")) {
                         estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--oro-editorial); color: var(--verde-sidebar); padding-bottom: 5px; margin-top: 30px;";
                     } else if (esMayusculas) {
-                        estilo = "font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--verde-sidebar); letter-spacing: 2px; margin-top: 15px;";
+                        estilo = "font-family: 'Playfair Display', serif; font-size: clamp(1rem, 3.5vw, 1.3rem); color: var(--verde-sidebar); letter-spacing: 2px; margin-top: 15px;";
                     } else {
-                        estilo = "font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: #444; font-style: italic;";
+                        estilo = "font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 4vw, 1.35rem); color: #444; font-style: italic;";
                     }
                     HTMLContenido += `<div style="${estilo}">${seccion}</div>`;
                 });
