@@ -321,15 +321,20 @@
             const darFormato = (texto) => {
                 if (!texto) return '';
                 
-                // 1. Detecta saltos de línea de Excel (Alt+Enter) y los convierte en párrafos HTML perfectos
-                // El \n+ asegura que aunque des 3 enter, solo se haga 1 salto estético.
+                // 1. Saltos de línea
                 let f = texto.replace(/\n+/g, '</p><p style="margin-top: 1.2rem; margin-bottom: 1rem !important; text-align: justify;">');
                 
-                // 2. Negritas
+                // 2. Negritas (**texto**)
                 f = f.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 
-                // 3. Resaltados
+                // 3. Resaltados (==texto==)
                 f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(203, 163, 77, 0.2); color: var(--verde-sidebar); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
+                
+                // 4. Cursivas con guion bajo (_texto_)
+                f = f.replace(/_(.*?)_/g, '<em>$1</em>');
+                
+                // 5. Cursivas con un solo asterisco (*texto*) - Se coloca después de las negritas para no interferir
+                f = f.replace(/\*(.*?)\*/g, '<em>$1</em>');
                 
                 return f;
             };
