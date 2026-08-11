@@ -273,15 +273,7 @@
         <div id="dashboard-panel">
             <button class="btn-cerrar-movil" onclick="cerrarPanelesMovil()">✕ Volver a la lectura</button>
 
-            <div class="card">
-                <h3>Acceso y Progreso <span>🔑</span></h3>
-                <p>Introduce la llave obtenida en tus actividades digitales para desbloquear los siguientes temas:</p>
-                <div class="input-group">
-                    <input type="text" id="llave-acceso" placeholder="EJ. FISIO2026">
-                    <button class="btn-primary" onclick="verificarLlave()">LIBERAR</button>
-                </div>
-            </div>
-
+            
             <div class="card">
                 <h3>Pase de Salida <span>🎓</span></h3>
                 <p>Completa la lectura del tema para habilitar la actividad interactiva de cierre:</p>
@@ -383,35 +375,44 @@
         }
 
         async function iniciarSesion() {
-            const id = document.getElementById('estudiante-id').value.trim();
-            const pass = document.getElementById('estudiante-pass').value.trim();
-            const btn = document.querySelector('.login-box button');
+    const id = document.getElementById('estudiante-id').value.trim();
+    const pass = document.getElementById('estudiante-pass').value.trim();
+    const btn = document.querySelector('.login-box button');
 
-            if (!id || !pass) { alert("Por favor, ingresa tu ID y contraseña."); return; }
+    if (!id || !pass) { 
+        alert("Por favor, ingresa tu ID y contraseña."); 
+        return; 
+    }
+    
+    btn.innerText = "AUTENTICANDO..."; 
+    btn.disabled = true;
 
-            btn.innerText = "AUTENTICANDO..."; btn.disabled = true;
+    try {
+        const response = await fetch(`${URL_GAS}?action=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`);
+        const result = await response.json();
 
-            try {
-                const response = await fetch(`${URL_GAS}?action=login&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`);
-                const result = await response.json();
+        // CANDADO AJUSTADO: Verifica si el login fue exitoso
+        if (result.success === true || (result && (result["Portada"] || Object.keys(result).length > 0 && result.success === undefined))) {
+            usuarioActual = id;
+            datosGlobales = result.data ? result.data : result;
+            
+            // 👉 NUEVA LÍNEA: Guardamos el progreso de forma global
+            window.progresoGlobal = result.progreso || [];
 
-                if (result.success === true || (result && (result["Portada"] || Object.keys(result).length > 0 && result.success === undefined))) {
-                    usuarioActual = id; 
-                    datosGlobales = result.data ? result.data : result; 
-                    document.getElementById('login-overlay').style.display = 'none';
-                    poblarMenuLateral(); 
-                    cargarVistaHoja("Portada");
-                    
-                    cerrarPanelesMovil();
-                } else {
-                    alert("Acceso denegado: " + (result.message || result.error || "Credenciales incorrectas."));
-                }
-            } catch (error) {
-                alert("Hubo un problema de conexión con Google. Intenta de nuevo.");
-            } finally {
-                btn.innerText = "INGRESAR"; btn.disabled = false;
-            }
+            document.getElementById('login-overlay').style.display = 'none';
+            poblarMenuLateral();
+            cargarVistaHoja("Portada");
+            cerrarPanelesMovil();
+        } else {
+            alert("Acceso denegado: " + (result.message || result.error || "Credenciales incorrectas."));
         }
+    } catch (error) {
+        alert("Hubo un problema de conexión con Google. Intenta de nuevo.");
+    } finally {
+        btn.innerText = "INGRESAR"; 
+        btn.disabled = false;
+    }
+}
 
         function poblarMenuLateral() {
             const menuLista = document.getElementById('menu-lista');
@@ -432,12 +433,8 @@
                 li.innerHTML = `<span>${tema}</span> <span style="color: var(--oro-editorial); font-size: 0.9rem;">${icono}</span>`;
                 
                 li.onclick = () => {
-                    if(esLibre) {
-                        cargarVistaHoja(tema);
-                        cerrarPanelesMovil();
-                    } else {
-                        alert("Este tema está bloqueado. Ingresa tu llave en la sección 'Acceso y Progreso' para liberarlo.");
-                    }
+                    cargarVistaHoja(tema);
+                    cerrarPanelesMovil();
                 };
                 
                 menuLista.appendChild(li);
@@ -445,110 +442,195 @@
         }
 
         function cargarVistaHoja(nombreHoja) {
-            temaSeleccionado = nombreHoja;
-            const datosHoja = datosGlobales[nombreHoja];
-            const tituloVisor = document.getElementById('titulo-visor');
-            const subtituloUnidad = document.getElementById('subtitulo-unidad');
-            const cuerpoVisor = document.getElementById('cuerpo-visor');
+    temaSeleccionado = nombreHoja;
+    const datosHoja = datosGlobales[nombreHoja];
+    const tituloVisor = document.getElementById('titulo-visor');
+    const subtituloUnidad = document.getElementById('subtitulo-unidad');
+    const cuerpoVisor = document.getElementById('cuerpo-visor');
+    poblarMenuLateral();
 
-            poblarMenuLateral(); 
+    // 1. Verificamos si es la Portada (siempre abierta) o si el tema está en su progreso
+    const esPortada = nombreHoja.toLowerCase() === 'portada';
+    const estaDesbloqueado = window.progresoGlobal && window.progresoGlobal.includes(nombreHoja);
 
-            if (!datosHoja || datosHoja.length === 0) {
-                tituloVisor.innerText = nombreHoja; subtituloUnidad.innerText = ''; cuerpoVisor.innerText = 'Sin contenido.'; return;
-            }
+    // 2. Si tiene permiso, ejecutamos tu código original de renderizado
+    if (esPortada || estaDesbloqueado) {
+        if (!datosHoja || datosHoja.length === 0) {
+            tituloVisor.innerText = nombreHoja;
+            subtituloUnidad.innerText = "";
+            cuerpoVisor.innerText = 'Sin contenido.';
+            return;
+        }
 
-            let unidadTexto = ''; let tituloTemaTexto = nombreHoja;
+        let unidadTexto = "";
+        let tituloTemaTexto = nombreHoja;
+
+        datosHoja.forEach((fila) => {
+            const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : "").trim();
+            const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : "").trim();
+            if (seccion === 'UNIDAD PERTENECIENTE') unidadTexto = contenido;
+            else if (seccion === 'TÍTULO DEL TEMA') tituloTemaTexto = contenido;
+        });
+
+        let HTMLContenido = "";
+        const darFormato = (texto) => {
+            if (!texto) return "";
+            let f = texto.replace(/\n+/g, '</p><p style="margin-top: 1.2rem; margin-bottom: 1rem !important; text-align: justify;">');
+            f = f.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(203, 163, 77, 0.2); color: var(--verde-sidebar); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
+            f = f.replace(/_(.*?)_/g, '<em>$1</em>');
+            f = f.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            return f;
+        };
+
+        if (esPortada) {
+            HTMLContenido += '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; margin-top: 10px; padding: 0 10px;">';
             datosHoja.forEach((fila) => {
-                const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
-                const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : '').trim();
-                if (seccion === 'UNIDAD PERTENECIENTE') unidadTexto = contenido;
-                else if (seccion === 'TÍTULO DEL TEMA') tituloTemaTexto = contenido;
+                const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : "").trim();
+                if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_') || seccion === "") return;
+                
+                let estilo = "";
+                const esMayusculas = seccion === seccion.toUpperCase() && /[A-ZÁÉÍÓÚ]/.test(seccion);
+                
+                if (seccion.includes("UNIVERSIDAD") || seccion.includes("SINALOA") || seccion === "ANTOLOGÍA") {
+                    estilo = "font-family: 'Montserrat', sans-serif; font-size: clamp(0.7rem, 2.5vw, 0.85rem); color: var(--oro-editorial); letter-spacing: 2px; text-transform: uppercase; margin-bottom: -5px;";
+                } else if (seccion === "FISIOPATOLOGÍA") {
+                    HTMLContenido += `<div class="titulo-fisiopatologia">${seccion}</div>`;
+                    return;
+                } else if (seccion.includes("Índice")) {
+                    estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--oro-editorial); color: var(--verde-sidebar); padding-bottom: 5px; margin-top: 30px;";
+                } else if (esMayusculas) {
+                    estilo = "font-family: 'Playfair Display', serif; font-size: clamp(1rem, 3.5vw, 1.3rem); color: var(--verde-sidebar); letter-spacing: 2px; margin-top: 15px;";
+                } else {
+                    estilo = "font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 4vw, 1.35rem); color: #444; font-style: italic;";
+                }
+                HTMLContenido += `<div style="${estilo}">${seccion}</div>`;
             });
-
-            const esPortada = nombreHoja.toLowerCase() === 'portada' && (tituloTemaTexto === 'Portada' || tituloTemaTexto === '');
-            let HTMLContenido = '';
-
-            const darFormato = (texto) => {
-                if (!texto) return '';
-                let f = texto.replace(/\n+/g, '</p><p style="margin-top: 1.2rem; margin-bottom: 1rem !important; text-align: justify;">');
-                f = f.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                f = f.replace(/==(.*?)==/g, '<mark style="background-color: rgba(203, 163, 77, 0.2); color: var(--verde-sidebar); font-weight: 600; padding: 2px 6px; border-radius: 4px;">$1</mark>');
-                f = f.replace(/_(.*?)_/g, '<em>$1</em>');
-                f = f.replace(/\*(.*?)\*/g, '<em>$1</em>');
-                return f;
-            };
-
-            if (esPortada) {
-                HTMLContenido += `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; margin-top: 10px; padding: 0 10px;">`;
-                datosHoja.forEach((fila) => {
-                    const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
-                    if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_') || seccion === '') return;
-                    let estilo = "";
-                    const esMayusculas = seccion === seccion.toUpperCase() && /[A-ZÁÉÍÓÚ]/.test(seccion);
-
-                    if (seccion.includes("UNIVERSIDAD") || seccion.includes("SINALOA") || seccion === "ANTOLOGÍA") {
-                        estilo = "font-family: 'Montserrat', sans-serif; font-size: clamp(0.7rem, 2.5vw, 0.85rem); color: var(--oro-editorial); letter-spacing: 2px; text-transform: uppercase; margin-bottom: -5px;";
-                    } else if (seccion === "FISIOPATOLOGÍA") {
-                        HTMLContenido += `<div class="titulo-fisiopatologia">${seccion}</div>`;
-                        return;
-                    } else if (seccion.includes("Índice")) {
-                        estilo = "font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--oro-editorial); color: var(--verde-sidebar); padding-bottom: 5px; margin-top: 30px;";
-                    } else if (esMayusculas) {
-                        estilo = "font-family: 'Playfair Display', serif; font-size: clamp(1rem, 3.5vw, 1.3rem); color: var(--verde-sidebar); letter-spacing: 2px; margin-top: 15px;";
-                    } else {
-                        estilo = "font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 4vw, 1.35rem); color: #444; font-style: italic;";
-                    }
-                    HTMLContenido += `<div style="${estilo}">${seccion}</div>`;
-                });
-                HTMLContenido += `</div>`;
-            } else {
-                HTMLContenido += `<div style="padding-bottom: 40px; margin-top: 10px;">`;
-                let isArticleBodyOpen = false;
-
-                datosHoja.forEach((fila) => {
-                    const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : '').trim();
-                    const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : '').trim();
-
-                    if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_')) return;
-                    if (seccion === '' && contenido === '') return;
-
-                    if (seccion !== '') {
-                        if (isArticleBodyOpen) { HTMLContenido += `</div></div>`; isArticleBodyOpen = false; }
-                        HTMLContenido += `<div class="section-block" style="margin-top: 2.5rem !important; margin-bottom: 0 !important;">`;
-                        HTMLContenido += `<div style="border-top: 1px solid rgba(203, 163, 77, 0.3); width: 100%; margin-bottom: 1rem;"></div>`;
-                        HTMLContenido += `<h2 class="section-heading" style="margin-bottom: 1rem !important; font-size: 1.4rem !important; font-family: 'Playfair Display', serif; color: var(--verde-sidebar);">${seccion}</h2>`;
-                        
-                        if (contenido !== '') {
-                            HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
-                            if (contenido.startsWith('>>')) {
-                                HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;"><p style="margin: 0; text-align: justify;">${darFormato(contenido.substring(2).trim())}</p></div>`;
-                            } else {
-                                HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
-                            }
-                            isArticleBodyOpen = true;
-                        }
-                    } else if (contenido !== '') {
-                        if (!isArticleBodyOpen) {
-                            HTMLContenido += `<div class="section-block" style="margin-top: 2rem !important; margin-bottom: 0 !important;">`;
-                            HTMLContenido += `<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">`;
-                            isArticleBodyOpen = true;
-                        }
+            HTMLContenido += '</div>';
+        } else {
+            HTMLContenido += '<div style="padding-bottom: 40px; margin-top: 10px;">';
+            let isArticleBodyOpen = false;
+            datosHoja.forEach((fila) => {
+                const seccion = (fila[0] !== undefined && fila[0] !== null ? String(fila[0]) : "").trim();
+                const contenido = (fila[1] !== undefined && fila[1] !== null ? String(fila[1]) : "").trim();
+                
+                if (seccion === 'UNIDAD PERTENECIENTE' || seccion === 'TÍTULO DEL TEMA' || seccion.startsWith('RECURSO_')) return;
+                if (seccion === "" && contenido === "") return;
+                
+                if (seccion !== "") {
+                    if (isArticleBodyOpen) { HTMLContenido += '</div></div>'; isArticleBodyOpen = false; }
+                    HTMLContenido += '<div class="section-block" style="margin-top: 2.5rem !important; margin-bottom: 0 !important;">';
+                    HTMLContenido += '<div style="border-top: 1px solid rgba(203, 163, 77, 0.3); width: 100%; margin-bottom: 1rem;"></div>';
+                    HTMLContenido += `<h2 class="section-heading" style="margin-bottom: 1rem !important; font-size: 1.4rem !important; font-family: 'Playfair Display', serif; color: var(--verde-sidebar); ">${seccion}</h2>`;
+                    
+                    if (contenido !== "") {
+                        HTMLContenido += '<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">';
                         if (contenido.startsWith('>>')) {
                             HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;"><p style="margin: 0; text-align: justify;">${darFormato(contenido.substring(2).trim())}</p></div>`;
                         } else {
                             HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
                         }
+                        isArticleBodyOpen = true;
                     }
-                });
-                if (isArticleBodyOpen) HTMLContenido += `</div></div>`;
-                HTMLContenido += `</div>`;
-            }
-
-            if (esPortada) { tituloVisor.innerText = ''; subtituloUnidad.innerText = ''; } 
-            else { tituloVisor.innerText = tituloTemaTexto; subtituloUnidad.innerText = unidadTexto; }
-
-            cuerpoVisor.innerHTML = HTMLContenido || '<p>Contenido en edición.</p>';
+                } else if (contenido !== "") {
+                    if (!isArticleBodyOpen) {
+                        HTMLContenido += '<div class="section-block" style="margin-top: 2rem !important; margin-bottom: 0 !important;">';
+                        HTMLContenido += '<div class="article-body" style="margin-top: 0 !important; font-size: clamp(1.1rem, 1.2vw + 0.9rem, 1.35rem) !important; line-height: 1.7 !important; color: #2c2c2c;">';
+                        isArticleBodyOpen = true;
+                    }
+                    if (contenido.startsWith('>>')) {
+                        HTMLContenido += `<div style="background-color: #f7f9f8; border-left: 4px solid var(--verde-sidebar); padding: 15px 20px; margin: 1.5rem 0; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;"><p style="margin: 0; text-align: justify;">${darFormato(contenido.substring(2).trim())}</p></div>`;
+                    } else {
+                        HTMLContenido += `<p style="margin-top: 0; margin-bottom: 1rem !important; text-align: justify;">${darFormato(contenido)}</p>`;
+                    }
+                }
+            });
+            if (isArticleBodyOpen) HTMLContenido += '</div></div>';
+            HTMLContenido += '</div>';
         }
+
+        if (esPortada) { 
+            tituloVisor.innerText = ""; 
+            subtituloUnidad.innerText = ""; 
+        } else {
+            tituloVisor.innerText = tituloTemaTexto;
+            subtituloUnidad.innerText = unidadTexto;
+        }
+        
+        cuerpoVisor.innerHTML = HTMLContenido || '<p>Contenido en edición.</p>';
+
+    } else {
+        // 3. PANTALLA DE BLOQUEO
+        tituloVisor.innerText = "Acceso Restringido";
+        subtituloUnidad.innerText = "";
+        
+        cuerpoVisor.innerHTML = `
+            <div style="text-align: center; padding: 50px 20px; font-family: sans-serif; background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 30px;">
+                <h2 style="color: #333; margin-bottom: 10px;">🔒 Contenido Bloqueado</h2>
+                <p style="color: #666; margin-bottom: 25px; line-height: 1.5; font-size: 1.1rem;">
+                    Para acceder al contenido de <b>${nombreHoja}</b>, necesitas la llave de acceso.<br>
+                    Completa el SCORM correspondiente en <b>DreamLab</b> para obtenerla.
+                </p>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                    <input type="text" id="input-llave-tema" placeholder="Ingresa tu llave de acceso..." 
+                           style="padding: 12px; width: 80%; max-width: 300px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; text-align: center;">
+                    
+                    <button onclick="verificarLlaveSCORM('${nombreHoja}')" 
+                            style="padding: 12px 25px; background-color: var(--verde-sidebar); color: var(--oro-editorial); border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; letter-spacing: 1px;">
+                        DESBLOQUEAR TEMA
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+async function verificarLlaveSCORM(nombreHoja) {
+    const inputLlave = document.getElementById('input-llave-tema').value.trim();
+    
+    if (inputLlave === "") {
+        alert("Por favor, ingresa una llave.");
+        return;
+    }
+
+    if (!usuarioActual) {
+        alert("Error: No se detectó la sesión del usuario.");
+        return;
+    }
+
+    // Buscamos el botón para deshabilitarlo mientras carga
+    const btn = document.querySelector('button[onclick^="verificarLlaveSCORM"]');
+    const btnOriginalText = btn.innerText;
+    btn.innerText = "VERIFICANDO...";
+    btn.disabled = true;
+
+    try {
+        const url = `${URL_GAS}?action=validarLlave&id=${encodeURIComponent(usuarioActual)}&tema=${encodeURIComponent(nombreHoja)}&llave=${encodeURIComponent(inputLlave)}`;
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.success === true) {
+            alert("¡Llave correcta! Tema desbloqueado.");
+            
+            // Añadimos el tema a la memoria temporal
+            if (!window.progresoGlobal) window.progresoGlobal = [];
+            window.progresoGlobal.push(nombreHoja);
+            
+            // Recargamos la vista, ahora pasará el Guardián
+            cargarVistaHoja(nombreHoja);
+        } else {
+            alert(result.mensaje || "Llave incorrecta. Asegúrate de haber completado el SCORM.");
+        }
+    } catch (error) {
+        alert("Hubo un problema de conexión al verificar la llave con el servidor.");
+    } finally {
+        if (btn) {
+            btn.innerText = btnOriginalText;
+            btn.disabled = false;
+        }
+    }
+}
+
     </script>
 </body>
 </html>
