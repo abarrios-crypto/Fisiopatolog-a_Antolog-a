@@ -417,31 +417,32 @@
 }
 
         function poblarMenuLateral() {
-            const menuLista = document.getElementById('menu-lista');
-            menuLista.innerHTML = ''; 
-            
-            const temas = Object.keys(datosGlobales);
-            temas.forEach(tema => {
-                const li = document.createElement('li');
-                li.className = 'menu-item' + (tema === temaSeleccionado ? ' active' : '');
-                
-                const esLibre = (tema === "Portada" || tema === "Tema 1" || temasDesbloqueados === true);
-                const icono = esLibre ? "🔓" : "🔒";
-                
-                if(!esLibre) {
-                    li.style.opacity = "0.5";
-                }
-
-                li.innerHTML = `<span>${tema}</span> <span style="color: var(--oro-editorial); font-size: 0.9rem;">${icono}</span>`;
-                
-                li.onclick = () => {
-                    cargarVistaHoja(tema);
-                    cerrarPanelesMovil();
-                };
-                
-                menuLista.appendChild(li);
-            });
+    const menuLista = document.getElementById('menu-lista');
+    menuLista.innerHTML = ''; 
+    
+    const temas = Object.keys(datosGlobales);
+    temas.forEach(tema => {
+        const li = document.createElement('li');
+        li.className = 'menu-item' + (tema === temaSeleccionado ? ' active' : '');
+        
+        // 🔓 Ahora consulta la función central de desbloqueo:
+        const esLibre = esTemaDesbloqueado(tema);
+        const icono = esLibre ? "🔓" : "🔒";
+        
+        if (!esLibre) {
+            li.style.opacity = "0.5";
         }
+
+        li.innerHTML = `<span>${tema}</span> <span style="color: var(--oro-editorial); font-size: 0.9rem;">${icono}</span>`;
+        
+        li.onclick = () => {
+            cargarVistaHoja(tema);
+            cerrarPanelesMovil();
+        };
+        
+        menuLista.appendChild(li);
+    });
+}
 
         function cargarVistaHoja(nombreHoja) {
     temaSeleccionado = nombreHoja;
@@ -453,7 +454,7 @@
 
     // 1. Verificamos si es la Portada (siempre abierta) o si el tema está en su progreso
     const esPortada = nombreHoja.toLowerCase() === 'portada';
-    const estaDesbloqueado = window.progresoGlobal && window.progresoGlobal.includes(nombreHoja);
+    const estaDesbloqueado = esTemaDesbloqueado(nombreHoja);
 
     // 2. Si tiene permiso, ejecutamos tu código original de renderizado
     if (esPortada || estaDesbloqueado) {
@@ -643,8 +644,13 @@ async function pedirPreguntaPaseSalida(nombreTema) {
         return;
     }
 
+    // 🔒 Candado de seguridad: bloquea la pregunta si el tema no está liberado
+    if (!esTemaDesbloqueado(nombreTema)) {
+        alert("🔒 Para realizar el Pase de Salida, primero debes desbloquear este tema introduciendo su llave SCORM.");
+        return;
+    }
+
     try {
-        // 👉 Cambiamos URL_GAS por URL_GAS_PASES
         const url = `${URL_GAS_PASES}?accion=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
         
         const respuesta = await fetch(url);
@@ -715,6 +721,14 @@ async function generarYEnviarPase(nombreTema) {
     } catch (error) {
         alert(`Error de conexión: ${error.message}`);
     }
+}
+
+        function esTemaDesbloqueado(tema) {
+    if (!tema) return false;
+    // La portada, el Tema 1 y la llave maestra siempre están libres
+    if (tema.toLowerCase() === "portada" || tema === "Tema 1" || temasDesbloqueados === true) return true;
+    // Revisa si el tema está registrado en el progreso del usuario
+    return window.progresoGlobal && window.progresoGlobal.includes(tema);
 }
     </script>
 </body>
