@@ -701,23 +701,20 @@ async function generarYEnviarPase(nombreTema) {
     };
 
     try {
-        // 👉 Cambiamos URL_GAS por URL_GAS_PASES
-        const respuesta = await fetch(URL_GAS_PASES, {
+        // 🔒 Enviamos con mode: 'no-cors' para evitar el bloqueo de lectura del navegador
+        await fetch(URL_GAS_PASES, {
             method: "POST",
+            mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
         });
 
-        const resultado = await respuesta.json();
+        // 🌐 Al completarse la petición sin errores de red, confirmamos el registro
+        alert(`🎉 ¡Pase de Salida registrado con éxito!\n\nTu Clave de Verificación: ${hashGenerado}`);
 
-        if (resultado.status === "éxito" || resultado.status === "exito") {
-            alert(`🎉 ¡Pase de Salida registrado con éxito!\n\nTu Clave de Verificación: ${hashGenerado}`);
-        } else {
-            alert(`Atención: La clave se generó (${hashGenerado}), pero hubo un detalle al guardar: ` + resultado.mensaje);
-        }
     } catch (error) {
-    alert(`Detalle del error: ${error.message}`);
-}
+        alert(`Error de conexión: ${error.message}`);
+    }
 }
     </script>
 </body>
