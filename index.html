@@ -644,7 +644,7 @@ async function pedirPreguntaPaseSalida(nombreTema) {
 
     try {
         // Enviamos la acción, el tema y la materia en la URL 📡
-        const url = `${URL_GAS}?accion=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
+        const url = `${URL_GAS}?action=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
         
         const respuesta = await fetch(url);
         const datos = await respuesta.json();
