@@ -716,8 +716,8 @@ async function generarYEnviarPase(nombreTema) {
             alert(`Atención: La clave se generó (${hashGenerado}), pero hubo un detalle al guardar: ` + resultado.mensaje);
         }
     } catch (error) {
-        alert(`Clave generada: ${hashGenerado}\n(Guárdala manualmente, ya que hubo un fallo de conexión).`);
-    }
+    alert(`Detalle del error: ${error.message}`);
+}
 }
     </script>
 </body>
