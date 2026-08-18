@@ -631,6 +631,90 @@ async function verificarLlaveSCORM(nombreHoja) {
     }
 }
 
+        // Variable global para almacenar la materia (se actualiza al iniciar sesión)
+var materiaUsuario = "Fisiopatologia"; 
+
+// Función para consultar la pregunta del Pase de Salida
+async function pedirPreguntaPaseSalida(nombreTema) {
+    try {
+        // Enviamos la acción, el tema y la materia en la URL 📡
+        const url = `${URL_GAS}?accion=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
+        
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+
+        if (datos.status === "success") {
+            // Recibimos la pregunta correctamente 📝
+            mostrarModalPregunta(datos.pregunta, nombreTema);
+        } else {
+            alert("Atención: " + datos.mensaje);
+        }
+    } catch (error) {
+        alert("Hubo un problema de conexión al obtener la pregunta.");
+    }
+}
+// Función para desplegar la pregunta y validar la respuesta del alumno
+function mostrarModalPregunta(preguntaObj, nombreTema) {
+    // Armamos el texto con la pregunta y las 4 opciones 📋
+    const mensajeModal = 
+        `EVALUACIÓN DE PASE DE SALIDA (${nombreTema})\n\n` +
+        `${preguntaObj.pregunta}\n\n` +
+        `A) ${preguntaObj.opcionA}\n` +
+        `B) ${preguntaObj.opcionB}\n` +
+        `C) ${preguntaObj.opcionC}\n` +
+        `D) ${preguntaObj.opcionD}\n\n` +
+        `Escribe la letra de tu respuesta (A, B, C o D):`;
+
+    // Mostramos la pregunta al alumno 💬
+    const respuestaAlumno = prompt(mensajeModal);
+
+    if (!respuestaAlumno) return; // Si cancela la ventana, salimos
+
+    // Comparación sin importar si escribe en mayúscula o minúscula
+    const seleccion = respuestaAlumno.trim().toUpperCase();
+    const correcta = String(preguntaObj.correcta).trim().toUpperCase();
+
+    if (seleccion === correcta) {
+        alert("¡Respuesta correcta! Generando tu Pase de Salida...");
+        // Llamaremos a la función del Paso 4 para guardar el código en el Sheet
+        generarYEnviarPase(nombreTema);
+    } else {
+        alert("❌ Respuesta incorrecta. Vuelve a revisar la lectura e inténtalo de nuevo.");
+    }
+}
+
+        // Función para generar la clave única y enviarla al servidor
+async function generarYEnviarPase(nombreTema) {
+    // Generamos un código único de verificación 🎲
+    const hashGenerado = "P-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    // Preparamos los datos a enviar 📦
+    const payload = {
+        matricula: usuarioActual, // Toma la matrícula del alumno con sesión activa
+        tema: nombreTema,        // Ejemplo: "Tema 1"
+        llaveDigital: hashGenerado,
+        tipoRecurso: "PASE"      // Buscará la columna PASE_Tema1, PASE_Tema2, etc.
+    };
+
+    try {
+        // Enviamos la información por método POST 📡
+        const respuesta = await fetch(URL_GAS, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (resultado.status === "éxito" || resultado.status === "exito") {
+            alert(`🎉 ¡Pase de Salida registrado con éxito!\n\nTu Clave de Verificación: ${hashGenerado}`);
+        } else {
+            alert(`Atención: La clave se generó (${hashGenerado}), pero hubo un detalle al guardar: ` + resultado.mensaje);
+        }
+    } catch (error) {
+        alert(`Clave generada: ${hashGenerado}\n(Guárdala manualmente, ya que hubo un fallo de conexión).`);
+    }
+}
     </script>
 </body>
 </html>
