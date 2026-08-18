@@ -302,6 +302,8 @@
         let temasDesbloqueados = false; 
         
         const URL_GAS = "https://script.google.com/macros/s/AKfycbwkO5qfrSCLHQv2ACF2bs_Ci7wefwWwOyz-taOJJLkao_yQKNqTQuF1vM9gfdMQIzo/exec";
+        // ➕ Agregamos la URL del servidor de Asistencias / Pases:
+        const URL_GAS_PASES = "https://script.google.com/macros/s/AKfycbzzgskaZuX8AF7ne7zn0cWsx-lh6BNn9l8E5FLUd8KOoBDa_CDz0SKShc5eXcsa3GyH/exec";
 
         function verificarLlave() {
             const llaveInput = document.getElementById('llave-acceso').value.trim().toUpperCase();
@@ -636,21 +638,19 @@ var materiaUsuario = "Fisiopatologia";
 
 // Función para consultar la pregunta del Pase de Salida
 async function pedirPreguntaPaseSalida(nombreTema) {
-    // Validamos que no intente pedir pase en la Portada ni sin tema seleccionado 🛡️
     if (!nombreTema || nombreTema.toLowerCase() === "portada") {
         alert("Por favor, abre un tema de estudio para poder realizar el Pase de Salida.");
         return;
     }
 
     try {
-        // Enviamos la acción, el tema y la materia en la URL 📡
-        const url = `${URL_GAS}?accion=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
+        // 👉 Cambiamos URL_GAS por URL_GAS_PASES
+        const url = `${URL_GAS_PASES}?accion=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
         
         const respuesta = await fetch(url);
         const datos = await respuesta.json();
 
         if (datos.status === "success") {
-            // Recibimos la pregunta correctamente 📝
             mostrarModalPregunta(datos.pregunta, nombreTema);
         } else {
             alert("Atención: " + datos.mensaje);
@@ -691,20 +691,18 @@ function mostrarModalPregunta(preguntaObj, nombreTema) {
 
         // Función para generar la clave única y enviarla al servidor
 async function generarYEnviarPase(nombreTema) {
-    // Generamos un código único de verificación 🎲
     const hashGenerado = "P-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-    // Preparamos los datos a enviar 📦
     const payload = {
-        matricula: usuarioActual, // Toma la matrícula del alumno con sesión activa
-        tema: nombreTema,        // Ejemplo: "Tema 1"
+        matricula: usuarioActual,
+        tema: nombreTema,
         llaveDigital: hashGenerado,
-        tipoRecurso: "PASE"      // Buscará la columna PASE_Tema1, PASE_Tema2, etc.
+        tipoRecurso: "PASE"
     };
 
     try {
-        // Enviamos la información por método POST 📡
-        const respuesta = await fetch(URL_GAS, {
+        // 👉 Cambiamos URL_GAS por URL_GAS_PASES
+        const respuesta = await fetch(URL_GAS_PASES, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
