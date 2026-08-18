@@ -278,7 +278,7 @@
                 <h3>Pase de Salida <span>🎓</span></h3>
                 <p>Completa la lectura del tema para habilitar la actividad interactiva de cierre:</p>
                 <div style="margin-top: 15px; border: 1.5px dashed var(--oro-editorial); padding: 5px; border-radius: 6px;">
-                    <button class="btn-primary" style="width: 100%;">COMPLETAR ACTIVIDAD</button>
+                    <button class="btn-primary" style="width: 100%;" onclick="pedirPreguntaPaseSalida(temaSeleccionado)">COMPLETAR ACTIVIDAD</button>
                 </div>
             </div>
         </div>
@@ -636,6 +636,12 @@ var materiaUsuario = "Fisiopatologia";
 
 // Función para consultar la pregunta del Pase de Salida
 async function pedirPreguntaPaseSalida(nombreTema) {
+    // Validamos que no intente pedir pase en la Portada ni sin tema seleccionado 🛡️
+    if (!nombreTema || nombreTema.toLowerCase() === "portada") {
+        alert("Por favor, abre un tema de estudio para poder realizar el Pase de Salida.");
+        return;
+    }
+
     try {
         // Enviamos la acción, el tema y la materia en la URL 📡
         const url = `${URL_GAS}?accion=obtenerPreguntaAzar&tema=${encodeURIComponent(nombreTema)}&materia=${encodeURIComponent(materiaUsuario)}`;
